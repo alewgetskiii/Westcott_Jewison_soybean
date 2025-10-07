@@ -1,0 +1,20 @@
+name: waob-m1
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy=2.1
+  - pandas=2.2
+  - scipy=1.13
+  - statsmodels=0.14.2
+  - matplotlib=3.9
+  - plotly=5.23
+  - nbformat>=5.10
+  - ipykernel=6.29
+  - ipython
+  - jupyterlab
+  - requests
+  - python-dotenv
+  - pip
+  - pip:
+      - pyarrow  # (optionnel pour CSV/Parquet rapides)
