@@ -8,6 +8,8 @@ dependencies:
   - scipy=1.13
   - statsmodels=0.14.2
   - matplotlib=3.9
+  - seaborn=0.13.2       
+  - scikit-learn=1.5.2    
   - plotly=5.23
   - nbformat>=5.10
   - ipykernel=6.29
@@ -17,4 +19,5 @@ dependencies:
   - python-dotenv
   - pip
   - pip:
-      - pyarrow  # (optionnel pour CSV/Parquet rapides)
+      - pyarrow 
+

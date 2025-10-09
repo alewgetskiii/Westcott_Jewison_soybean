@@ -4,7 +4,7 @@ from typing import Iterable, Tuple, Optional
 
 USDA_API_KEY = os.getenv("USDA_API_KEY") or "D1ABF2AD-362D-346E-A641-93A2FA6ED6D8"
 BASE = "https://quickstats.nass.usda.gov/api/api_GET/"
-SEVEN_STATES = ("IA","IL","IN","OH","MO","MN","NE",)  # 7 États producteurs du modèle WAOB
+SEVEN_STATES = ("IA","IL","IN","OH","MO","MN","NE",)  
 
 # ----------------------------- Fetch weekly -----------------------------
 def fetch_soy_condition_states(year_from: int, year_to: int,
@@ -56,14 +56,13 @@ def to_compact_weekly(df: pd.DataFrame) -> pd.DataFrame:
         if c not in agg.columns: agg[c] = 0.0
     return agg
 
-# ----------------------------- Annual features  -----------------------
 def build_condition_yearly_features(weekly_compact: pd.DataFrame) -> pd.DataFrame:
     w = weekly_compact.copy()
     for c in ["GE","FAIR","PVP"]:
         if c not in w.columns: w[c] = 0.0
     w["cond_index"] = (5*w["GE"] + 3*w["FAIR"] + 1*w["PVP"]) / 100.0
 
-    ja = w[w["week"].between(27, 35)]  # ~ Juillet–Août
+    ja = w[w["week"].between(27, 35)]  
     feats = (ja.groupby(["year","state"])
                .agg(gex_JA_mean=("GE","mean"),
                     gex_JA_min=("GE","min"),
@@ -83,7 +82,7 @@ def build_condition_yearly_features(weekly_compact: pd.DataFrame) -> pd.DataFram
 
     return feats
 
-# ----------------------------- Orchestrateur + IO --------------------------------
+
 def get_soy_condition_features(year_from: int=1988, year_to: int=2025,
                                states: Iterable[str]=SEVEN_STATES,
                                save_path: Optional[str]=None
@@ -96,17 +95,14 @@ def get_soy_condition_features(year_from: int=1988, year_to: int=2025,
     annual_features = build_condition_yearly_features(weekly_compact)
 
     if save_path:
-        # déduit format du suffixe
         if save_path.lower().endswith(".parquet"):
             annual_features.to_parquet(save_path, index=False)
         elif save_path.lower().endswith(".csv"):
             annual_features.to_csv(save_path, index=False)
         else:
-            # default parquet
             annual_features.to_parquet(save_path + ".parquet", index=False)
     return weekly_compact, annual_features
 
-# Exécution directe (debug rapide)
 if __name__ == "__main__":
     wk, feats = get_soy_condition_features(1887, 2024, SEVEN_STATES, save_path="data/processed/soy_conditions_features.parquet")
     print("Weekly shape:", wk.shape)
